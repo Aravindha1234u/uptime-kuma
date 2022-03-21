@@ -57,6 +57,7 @@
         "reset-version": "node extra/beta/reset-version.js"
     },
     "dependencies": {
+        "npm":"8.5.5",
         "@fortawesome/fontawesome-svg-core": "~1.2.36",
         "@fortawesome/free-regular-svg-icons": "~5.15.4",
         "@fortawesome/free-solid-svg-icons": "~5.15.4",
