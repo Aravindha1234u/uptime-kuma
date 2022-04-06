@@ -54,6 +54,8 @@ class Database {
         "patch-notification_sent_history.sql": true,
         "patch-monitor-basic-auth.sql": true,
         "patch-status-page.sql": true,
+        "patch-proxy.sql": true,
+        "patch-monitor-expiry-notification.sql": true,
     }
 
     /**
@@ -218,6 +220,10 @@ class Database {
      * @returns {Promise<void>}
      */
     static async migrateNewStatusPage() {
+
+        // Fix 1.13.0 empty slug bug
+        await R.exec("UPDATE status_page SET slug = 'empty-slug-recover' WHERE TRIM(slug) = ''");
+
         let title = await setting("title");
 
         if (title) {
