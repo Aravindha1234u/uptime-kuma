@@ -16,6 +16,14 @@
                             {{ item.title }}
                         </div>
                     </router-link>
+
+                    <!-- Logout Button -->
+                    <a v-if="$root.isMobile && $root.loggedIn && $root.socket.token !== 'autoLogin'" class="logout" @click.prevent="$root.logout">
+                        <div class="menu-item">
+                            <font-awesome-icon icon="sign-out-alt" />
+                            {{ $t("Logout") }}
+                        </div>
+                    </a>
                 </div>
                 <div class="settings-content col-lg-9 col-md-7">
                     <div v-if="currentPage" class="settings-content-header">
@@ -137,6 +145,10 @@ export default {
                     this.settings.keepDataPeriodDays = 180;
                 }
 
+                if (this.settings.tlsExpiryNotifyDays === undefined) {
+                    this.settings.tlsExpiryNotifyDays = [];
+                }
+
                 this.settingsLoaded = true;
             });
         },
@@ -232,5 +244,9 @@ footer {
             }
         }
     }
+}
+
+.logout {
+    color: $danger !important;
 }
 </style>

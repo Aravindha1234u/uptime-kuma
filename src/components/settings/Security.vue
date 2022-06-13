@@ -4,7 +4,7 @@
             <!-- Change Password -->
             <template v-if="!settings.disableAuth">
                 <p>
-                    {{ $t("Current User") }}: <strong>{{ username }}</strong>
+                    {{ $t("Current User") }}: <strong>{{ $root.username }}</strong>
                     <button v-if="! settings.disableAuth" id="logout-btn" class="btn btn-danger ms-4 me-2 mb-2" @click="$root.logout">{{ $t("Logout") }}</button>
                 </p>
 
@@ -206,7 +206,7 @@
 
             <template v-else-if="$i18n.locale === 'bg-BG' ">
                 <p>Сигурни ли сте, че желаете да <strong>изключите удостоверяването</strong>?</p>
-                <p>Използва се в случаите, когато <strong>има настроен алтернативен метод за удостоверяване</strong> преди Uptime Kuma, например Cloudflare Access.</p>
+                <p>Използва се в случаите, когато <strong>има настроен алтернативен метод за удостоверяване</strong> преди Uptime Kuma, например Cloudflare Access, Authelia или друг механизъм за удостоверяване.</p>
                 <p>Моля, използвайте с повишено внимание.</p>
             </template>
 
@@ -232,6 +232,12 @@
                 <p>Bạn có muốn <strong>TẮT XÁC THỰC</strong> không?</p>
                 <p>Điều này rất nguy hiểm<strong>BẤT KỲ AI</strong> cũng có thể truy cập và cướp quyền điều khiển.</p>
                 <p>Vui lòng <strong>cẩn thận</strong>.</p>
+            </template>
+
+            <template v-else-if="$i18n.locale === 'th-TH' ">
+                <p>คุณต้องการที่จะ <strong>ปิดใช้งานระบบรับรองความถูกต้องใช่หรือไม่</strong>?</p>
+                <p>ระบบนี้ถูกออกแบบมาเพื่อการใช้งานกับระบบรับรองความถูกต้องของบุคคลที่สามเช่น Cloudflare Access, Authelia หรือวิธีการอื่น ๆ</p>
+                <p>โปรดใช้ความระมัดระวังในการเลือกใช้งานระบบนี้ !</p>
             </template>
 
             <!-- English (en) -->
@@ -269,7 +275,6 @@ export default {
 
     data() {
         return {
-            username: "",
             invalidPassword: false,
             password: {
                 currentPassword: "",
@@ -297,10 +302,6 @@ export default {
         },
     },
 
-    mounted() {
-        this.loadUsername();
-    },
-
     methods: {
         savePassword() {
             if (this.password.newPassword !== this.password.repeatNewPassword) {
@@ -319,14 +320,6 @@ export default {
             }
         },
 
-        loadUsername() {
-            const jwtPayload = this.$root.getJWTPayload();
-
-            if (jwtPayload) {
-                this.username = jwtPayload.username;
-            }
-        },
-
         disableAuth() {
             this.settings.disableAuth = true;
 
@@ -334,6 +327,8 @@ export default {
             // Set it to empty if done
             this.saveSettings(() => {
                 this.password.currentPassword = "";
+                this.$root.username = null;
+                this.$root.socket.token = "autoLogin";
             }, this.password.currentPassword);
         },
 
@@ -355,7 +350,7 @@ export default {
 <style lang="scss" scoped>
 @import "../../assets/vars.scss";
 
-h5:after {
+h5::after {
     content: "";
     display: block;
     width: 50%;
